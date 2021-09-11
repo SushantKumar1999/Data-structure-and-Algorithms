@@ -94,77 +94,118 @@ public class Main {
 
 
     //1. using static variable
-    static int dia;
-    public static int helper(Node node) {
+    static int tilt = 0;
+    public static int tilt(Node node) {
+        // write your code here to set the tilt data member
+        tilt = 0;
+        subtreeSum(node);
+
+        return tilt;
+    }
+
+    public static int subtreeSum(Node node) {
         if (node == null) {
-            return -1;
+            return 0;
         }
 
-        int lch = helper(node.left);
-        int rch = helper(node.right);
+        int lss = subtreeSum(node.left);
+        int rss = subtreeSum(node.right);
 
-        int dist = lch + rch + 2;
+        int node_tilt = Math.abs(lss - rss);
 
-        if (dist > dia) {
-            dia = dist;
-        }
+        tilt += node_tilt;
 
-        int ht = Math.max(lch, rch) + 1;
-
-        return ht;
-
-    }
-
-    public static int diameter1(Node node) {
-        // write your code here
-        dia = 0;
-        helper(node);
-
-        return dia;
+        return lss + rss + node.data;
     }
 
 
 
-    //2. using return type pair
-    public static class DiaPair {
-        int dia;
-        int ht;
-
-        DiaPair() {
-
-        }
-
-        DiaPair(int dia, int ht) {
-            this.dia = dia;
-            this.ht = ht;
-        }
+    //2. passing an object and update changes in it globally
+    public static class Helper {
+        int tilt = 0;
     }
 
-    public static DiaPair helper(Node node) {
+    public static int tilt(Node node) {
+        // write your code here to set the tilt data member
+        Helper obj = new Helper();
+
+        subtreeSum(node, obj);
+
+        return obj.tilt;
+    }
+
+    public static int subtreeSum(Node node, Helper obj) {
         if (node == null) {
-            return new DiaPair(0, -1);
+            return 0;
         }
 
-        DiaPair lp = helper(node.left);
-        DiaPair rp = helper(node.right);
+        int lss = subtreeSum(node.left, obj);
+        int rss = subtreeSum(node.right, obj);
 
-        int dist = lp.ht + rp.ht + 2;
-        int dia = Math.max(Math.max(lp.dia, rp.dia), dist);
-        int ht = Math.max(lp.ht, rp.ht) + 1;
+        int node_tilt = Math.abs(lss - rss);
 
-        return new DiaPair(dia, ht);
+        obj.tilt += node_tilt;
+
+        return lss + rss + node.data;
     }
 
-    public static int diameter1(Node node) {
-        // write your code here
 
-        DiaPair rp = helper(node);
 
-        return rp.dia;
+    //3. using pair is return type
+    public static class pair {
+        int ss; //subtree sum
+        int st; //subtree tilt
+
+        pair() {
+
+        }
+
+        pair(int ss, int st) {
+            this.ss = ss;
+            this.st = st;
+        }
+    }
+
+    public static pair helper(Node node) {
+        if (node == null) {
+            return new pair(0, 0);
+        }
+
+        pair lp = helper(node.left);
+        pair rp = helper(node.right);
+
+        int ss = lp.ss + rp.ss + node.data;
+        int node_tilt = Math.abs(lp.ss - rp.ss);
+        int st = node_tilt + lp.st + rp.st;
+
+        return new pair(ss, st);
+    }
+
+    static int tilt = 0;
+    public static int tilt(Node node) {
+        // write your code here to set the tilt data member
+
+        pair rp = helper(node);
+        return rp.st;
     }
 
     public static void main(String[] args) throws Exception {
-      //input can be managed
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int n = Integer.parseInt(br.readLine());
+        Integer[] arr = new Integer[n];
+        String[] values = br.readLine().split(" ");
+        for (int i = 0; i < n; i++) {
+            if (values[i].equals("n") == false) {
+                arr[i] = Integer.parseInt(values[i]);
+            } else {
+                arr[i] = null;
+            }
+        }
+
+        Node root = construct(arr);
+
+        tilt(root);
+        System.out.println(tilt);
     }
 
 }

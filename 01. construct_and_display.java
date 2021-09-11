@@ -1,124 +1,62 @@
-import java.util.Stack;
+import java.util.*;
 
 public class Main {
+    public static class Edge {
+        int src;
+        int nbr;
+        int wt;
 
-    public static class Node {
-        int data;
-        Node left;
-        Node right;
-
-        Node() {
-
-        }
-
-        Node(int data) {
-            this.data = data;
-        }
-    }
-
-    public static class Pair {
-        Node node;
-        int state;
-
-        Pair() {
+        Edge() {
 
         }
 
-        Pair(Node node,int state) {
-            this.node = node;
-            this.state = state;
+        Edge(int src,int nbr,int wt) {
+            this.src = src;
+            this.nbr = nbr;
+            this.wt = wt;
         }
     }
 
-    public static Node construct(int[]arr) {
-        Stack<Pair>st = new Stack<>();
-
-        Node root = new Node(arr[0]);
-
-        st.push(new Pair(root,0));
-
-        //0 -> waiting for left child
-        //1 -> waiting for right child
-        //2 -> both left and right are done
-
-        int idx = 1;
-
-        while(st.size() > 0) {
-            Pair top = st.peek();
-
-            if(top.state == 0) {
-                //waiting for left child
-                if(arr[idx] != -1) {
-                    Node lc = new Node(arr[idx]);
-                    top.node.left = lc;
-                    Pair lcp = new Pair(lc,0);
-                    st.push(lcp);
-                }
-                top.state++;
-                idx++;
-            }
-            else if(top.state == 1){
-                //waiting for right child
-                 if(arr[idx] != -1) {
-                    Node rc = new Node(arr[idx]);
-                    top.node.right = rc;
-                    Pair rcp = new Pair(rc,0);
-                    st.push(rcp);
-                }
-                top.state++;
-                idx++;
-            }
-            else {
-                st.pop();
-            }
-        }
-
-        return root;
-    }
-
-    public static void display(Node root) {
-        if(root == null) {
-            return;
-        }
-
-        String str = " <- "+ root.data + " -> ";
-        String l = (root.left != null) ?  (root.left.data + "") : (".");
-        String r = (root.right != null) ? (root.right.data + ""): (".");
-
-        System.out.println(l + str + r);
-
-        display(root.left);
-        display(root.right); 
-    }
-
-    static String pre;
-    static String in;
-    static String post;
-
-    public static void traversal(Node node) {
-        if(node == null) {
-            return;
-        }
-       
-        pre += node.data;  //pre
-        traversal(node.left); //left call
-        in += node.data;  //in
-        traversal(node.right); //right call
-        post += node.data; //post
-    }
-    
     public static void main(String[]args) {
+        Scanner scn = new Scanner(System.in);
+        int vtx = scn.nextInt(); //total vertices
+        int e = scn.nextInt(); //total edges
 
-        int[]arr = {10,20,-1,40,60,-1,-1,70,-1,-1,30,50,-1,-1,-1};
+        ArrayList<Edge>[]graph = new ArrayList[vtx];
+        for(int i=0; i < graph.length;i++) {
+            graph[i] = new ArrayList<>();
+        }
 
-        Node root = construct(arr);
+        while(e-- > 0) {
+            int u = scn.nextInt();
+            int v = scn.nextInt();
+            int wt = scn.nextInt();
 
-        display(root);
+            addEdge(graph,u,v,wt);
+        }
 
-        pre = "";
-        in = "";
-        post = "";
+        display(graph);
+    }
 
-        traversal(root);
+    public static void display(ArrayList<Edge>[]graph) {
+        for(int i = 0; i < graph.length;i++) {
+            System.out.print(i + " -> ");
+            for(Edge ne : graph[i]) {
+                int src = i;
+                int nbr = ne.nbr;
+                int wt = ne.wt;
+
+                System.out.print(src + " - " + nbr + " @ " + wt + ", ");
+            }
+            System.out.println();
+        }
+    }
+
+    public static void addEdge(ArrayList<Edge>[]graph,int u,int v,int wt) {
+        Edge e1 = new Edge(u,v,wt);
+        Edge e2 = new Edge(v,u,wt);
+
+        graph[u].add(e1);
+        graph[v].add(e2);
     }
 }

@@ -79,92 +79,101 @@ public class Main {
         display(node.right);
     }
 
-    public static int height(Node node) {
+
+    //size of bst
+    public static int size(Node node) {
         if (node == null) {
-            return -1;
+            return 0;
         }
 
-        int lh = height(node.left);
-        int rh = height(node.right);
+        int lsize = size(node.left);
+        int rsize = size(node.right);
 
-        int th = Math.max(lh, rh) + 1;
-        return th;
+        return lsize + rsize + 1;
     }
 
 
-
-    //1. using static variable
-    static int dia;
-    public static int helper(Node node) {
+    //sum of bst
+    public static int sum(Node node) {
         if (node == null) {
-            return -1;
+            return 0;
         }
 
-        int lch = helper(node.left);
-        int rch = helper(node.right);
+        int lsum = sum(node.left);
+        int rsum = sum(node.right);
 
-        int dist = lch + rch + 2;
-
-        if (dist > dia) {
-            dia = dist;
-        }
-
-        int ht = Math.max(lch, rch) + 1;
-
-        return ht;
-
-    }
-
-    public static int diameter1(Node node) {
-        // write your code here
-        dia = 0;
-        helper(node);
-
-        return dia;
+        return lsum + rsum + node.data;
     }
 
 
+    //max of bst
+    public static int max(Node node) {
 
-    //2. using return type pair
-    public static class DiaPair {
-        int dia;
-        int ht;
-
-        DiaPair() {
-
-        }
-
-        DiaPair(int dia, int ht) {
-            this.dia = dia;
-            this.ht = ht;
+        if (node.right != null) {
+            int rans = max(node.right);
+            return rans;
+        } else {
+            return node.data;
         }
     }
 
-    public static DiaPair helper(Node node) {
+
+    //min of bst
+    public static int min(Node node) {
+        if (node.left != null) {
+            int lans = min(node.left);
+            return lans;
+        } else {
+            return node.data;
+        }
+    }
+
+
+    //find in bst
+    public static boolean find(Node node, int data) {
         if (node == null) {
-            return new DiaPair(0, -1);
+            return false;
         }
 
-        DiaPair lp = helper(node.left);
-        DiaPair rp = helper(node.right);
-
-        int dist = lp.ht + rp.ht + 2;
-        int dia = Math.max(Math.max(lp.dia, rp.dia), dist);
-        int ht = Math.max(lp.ht, rp.ht) + 1;
-
-        return new DiaPair(dia, ht);
-    }
-
-    public static int diameter1(Node node) {
-        // write your code here
-
-        DiaPair rp = helper(node);
-
-        return rp.dia;
+        if (node.data < data) {
+            //go to right
+            return find(node.right, data);
+        } else if (node.data > data) {
+            //go to left
+            return find(node.left, data);
+        } else {
+            return true;
+        }
     }
 
     public static void main(String[] args) throws Exception {
-      //input can be managed
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int n = Integer.parseInt(br.readLine());
+        Integer[] arr = new Integer[n];
+        String[] values = br.readLine().split(" ");
+        for (int i = 0; i < n; i++) {
+            if (values[i].equals("n") == false) {
+                arr[i] = Integer.parseInt(values[i]);
+            } else {
+                arr[i] = null;
+            }
+        }
+
+        int data = Integer.parseInt(br.readLine());
+
+        Node root = construct(arr);
+
+        int size = size(root);
+        int sum = sum(root);
+        int max = max(root);
+        int min = min(root);
+        boolean found = find(root, data);
+
+        System.out.println(size);
+        System.out.println(sum);
+        System.out.println(max);
+        System.out.println(min);
+        System.out.println(found);
     }
 
 }

@@ -64,6 +64,72 @@ public class Main {
         return root;
     }
 
+
+    //1. using static variable
+    static boolean isBal;
+    public static int helper(Node node) {
+        if (node == null) {
+            return 0; //height in terms of node
+        }
+
+        int lh = helper(node.left);
+        int rh = helper(node.right);
+
+        int bf = Math.abs(lh - rh); //balancing factor
+
+        if (bf > 1) {
+            isBal = false;
+        }
+
+        return Math.max(lh, rh) + 1;
+    }
+
+    public static boolean isBalanced(Node root) {
+        isBal = true;
+
+        helper(root);
+
+        return isBal;
+    }
+
+
+
+    //2. using return type pair
+    public static class BalPair {
+        int ht;
+        boolean isBal;
+
+        BalPair() {
+
+        }
+
+        BalPair(int ht, boolean isBal) {
+            this.ht = ht;
+            this.isBal = isBal;
+        }
+    }
+
+    public static BalPair helper(Node node) {
+        if (node == null) {
+            return new BalPair(0, true);
+        }
+
+        BalPair lp = helper(node.left);
+        BalPair rp = helper(node.right);
+
+        int bf = Math.abs(lp.ht - rp.ht); //balancing factor
+        boolean isBal = lp.isBal && rp.isBal && (bf <= 1);
+        int ht = Math.max(lp.ht, rp.ht) + 1;
+
+        return new BalPair(ht, isBal);
+    }
+
+    public static boolean isBalanced(Node root) {
+        BalPair rp = helper(root);
+        return rp.isBal;
+    }
+
+    
     public static void display(Node node) {
         if (node == null) {
             return;
@@ -79,92 +145,22 @@ public class Main {
         display(node.right);
     }
 
-    public static int height(Node node) {
-        if (node == null) {
-            return -1;
-        }
-
-        int lh = height(node.left);
-        int rh = height(node.right);
-
-        int th = Math.max(lh, rh) + 1;
-        return th;
-    }
-
-
-
-    //1. using static variable
-    static int dia;
-    public static int helper(Node node) {
-        if (node == null) {
-            return -1;
-        }
-
-        int lch = helper(node.left);
-        int rch = helper(node.right);
-
-        int dist = lch + rch + 2;
-
-        if (dist > dia) {
-            dia = dist;
-        }
-
-        int ht = Math.max(lch, rch) + 1;
-
-        return ht;
-
-    }
-
-    public static int diameter1(Node node) {
-        // write your code here
-        dia = 0;
-        helper(node);
-
-        return dia;
-    }
-
-
-
-    //2. using return type pair
-    public static class DiaPair {
-        int dia;
-        int ht;
-
-        DiaPair() {
-
-        }
-
-        DiaPair(int dia, int ht) {
-            this.dia = dia;
-            this.ht = ht;
-        }
-    }
-
-    public static DiaPair helper(Node node) {
-        if (node == null) {
-            return new DiaPair(0, -1);
-        }
-
-        DiaPair lp = helper(node.left);
-        DiaPair rp = helper(node.right);
-
-        int dist = lp.ht + rp.ht + 2;
-        int dia = Math.max(Math.max(lp.dia, rp.dia), dist);
-        int ht = Math.max(lp.ht, rp.ht) + 1;
-
-        return new DiaPair(dia, ht);
-    }
-
-    public static int diameter1(Node node) {
-        // write your code here
-
-        DiaPair rp = helper(node);
-
-        return rp.dia;
-    }
-
     public static void main(String[] args) throws Exception {
-      //input can be managed
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int n = Integer.parseInt(br.readLine());
+        Integer[] arr = new Integer[n];
+        String[] values = br.readLine().split(" ");
+        for (int i = 0; i < n; i++) {
+            if (values[i].equals("n") == false) {
+                arr[i] = Integer.parseInt(values[i]);
+            } else {
+                arr[i] = null;
+            }
+        }
+
+        Node root = construct(arr);
+        System.out.println(isBalanced(root));
+
     }
 
 }

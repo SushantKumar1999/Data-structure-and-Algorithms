@@ -79,92 +79,78 @@ public class Main {
         display(node.right);
     }
 
-    public static int height(Node node) {
+    public static boolean find(Node node, int data) {
         if (node == null) {
-            return -1;
+            return false;
         }
 
-        int lh = height(node.left);
-        int rh = height(node.right);
-
-        int th = Math.max(lh, rh) + 1;
-        return th;
+        if (node.data < data) {
+            return find(node.right, data);
+        } else if (node.data > data) {
+            return find(node.left, data);
+        } else {
+            return true;
+        }
     }
 
 
 
-    //1. using static variable
-    static int dia;
-    public static int helper(Node node) {
+    //1. using find method T : o(n*h) , S : o(h)
+    public static void targetSumPair(Node node, Node root, int target) {
         if (node == null) {
-            return -1;
+            return;
         }
 
-        int lch = helper(node.left);
-        int rch = helper(node.right);
+        targetSumPair(node.left, root, target);
 
-        int dist = lch + rch + 2;
+        //work
+        int rem_tar = target - node.data;
 
-        if (dist > dia) {
-            dia = dist;
+        if (rem_tar > node.data) {
+            if (find(root, rem_tar) == true) {
+                System.out.println(node.data + " " + rem_tar);
+            }
         }
 
-        int ht = Math.max(lch, rch) + 1;
-
-        return ht;
-
-    }
-
-    public static int diameter1(Node node) {
-        // write your code here
-        dia = 0;
-        helper(node);
-
-        return dia;
+        targetSumPair(node.right, root, target);
     }
 
 
 
-    //2. using return type pair
-    public static class DiaPair {
-        int dia;
-        int ht;
-
-        DiaPair() {
-
-        }
-
-        DiaPair(int dia, int ht) {
-            this.dia = dia;
-            this.ht = ht;
-        }
-    }
-
-    public static DiaPair helper(Node node) {
+    //2. using inorder property T : o(n), S : o(n)
+    public static void inorder(Node node, ArrayList < Integer > list) {
         if (node == null) {
-            return new DiaPair(0, -1);
+            return;
         }
 
-        DiaPair lp = helper(node.left);
-        DiaPair rp = helper(node.right);
-
-        int dist = lp.ht + rp.ht + 2;
-        int dia = Math.max(Math.max(lp.dia, rp.dia), dist);
-        int ht = Math.max(lp.ht, rp.ht) + 1;
-
-        return new DiaPair(dia, ht);
+        inorder(node.left, list);
+        list.add(node.data);
+        inorder(node.right, list);
     }
 
-    public static int diameter1(Node node) {
-        // write your code here
+    public static void targetSumPair(Node root, int target) {
+        ArrayList < Integer > list = new ArrayList < > ();
+        inorder(root, list);
 
-        DiaPair rp = helper(node);
+        int lo = 0;
+        int hi = list.size() - 1;
 
-        return rp.dia;
+        while (lo < hi) {
+            if (list.get(lo) + list.get(hi) == target) {
+                System.out.println(list.get(lo) + " " + list.get(hi));
+                lo++;
+                hi--;
+            } else if (list.get(lo) + list.get(hi) > target) {
+                hi--;
+            } else {
+                lo++;
+            }
+        }
     }
+
 
     public static void main(String[] args) throws Exception {
-      //input can be managed
+        // write your code here
     }
 
 }

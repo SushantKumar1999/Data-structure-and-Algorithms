@@ -79,92 +79,42 @@ public class Main {
         display(node.right);
     }
 
-    public static int height(Node node) {
+
+    //print in range
+    public static void pir(Node node, int lo, int hi) {
         if (node == null) {
-            return -1;
+            return;
         }
 
-        int lh = height(node.left);
-        int rh = height(node.right);
-
-        int th = Math.max(lh, rh) + 1;
-        return th;
-    }
-
-
-
-    //1. using static variable
-    static int dia;
-    public static int helper(Node node) {
-        if (node == null) {
-            return -1;
+        if (node.data >= lo && node.data <= hi) {
+            pir(node.left, lo, hi);
+            System.out.println(node.data);
+            pir(node.right, lo, hi);
+        } else if (node.data < lo) {
+            pir(node.right, lo, hi);
+        } else if (node.data > hi) {
+            pir(node.left, lo, hi);
         }
-
-        int lch = helper(node.left);
-        int rch = helper(node.right);
-
-        int dist = lch + rch + 2;
-
-        if (dist > dia) {
-            dia = dist;
-        }
-
-        int ht = Math.max(lch, rch) + 1;
-
-        return ht;
-
-    }
-
-    public static int diameter1(Node node) {
-        // write your code here
-        dia = 0;
-        helper(node);
-
-        return dia;
-    }
-
-
-
-    //2. using return type pair
-    public static class DiaPair {
-        int dia;
-        int ht;
-
-        DiaPair() {
-
-        }
-
-        DiaPair(int dia, int ht) {
-            this.dia = dia;
-            this.ht = ht;
-        }
-    }
-
-    public static DiaPair helper(Node node) {
-        if (node == null) {
-            return new DiaPair(0, -1);
-        }
-
-        DiaPair lp = helper(node.left);
-        DiaPair rp = helper(node.right);
-
-        int dist = lp.ht + rp.ht + 2;
-        int dia = Math.max(Math.max(lp.dia, rp.dia), dist);
-        int ht = Math.max(lp.ht, rp.ht) + 1;
-
-        return new DiaPair(dia, ht);
-    }
-
-    public static int diameter1(Node node) {
-        // write your code here
-
-        DiaPair rp = helper(node);
-
-        return rp.dia;
     }
 
     public static void main(String[] args) throws Exception {
-      //input can be managed
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int n = Integer.parseInt(br.readLine());
+        Integer[] arr = new Integer[n];
+        String[] values = br.readLine().split(" ");
+        for (int i = 0; i < n; i++) {
+            if (values[i].equals("n") == false) {
+                arr[i] = Integer.parseInt(values[i]);
+            } else {
+                arr[i] = null;
+            }
+        }
+
+        int d1 = Integer.parseInt(br.readLine());
+        int d2 = Integer.parseInt(br.readLine());
+
+        Node root = construct(arr);
+        pir(root, d1, d2);
     }
 
 }

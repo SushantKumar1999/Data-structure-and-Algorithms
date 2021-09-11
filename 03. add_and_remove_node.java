@@ -12,6 +12,7 @@ public class Main {
             this.left = left;
             this.right = right;
         }
+
     }
 
     public static class Pair {
@@ -79,92 +80,64 @@ public class Main {
         display(node.right);
     }
 
-    public static int height(Node node) {
+
+
+    //add node to a bst
+    public static Node add(Node node, int data) {
         if (node == null) {
-            return -1;
+            return new Node(data, null, null);
         }
 
-        int lh = height(node.left);
-        int rh = height(node.right);
+        if (node.data < data) {
+            //go to right
+            node.right = add(node.right, data);
+        } else if (node.data > data) {
+            //go to left
+            node.left = add(node.left, data);
+        } else {
+            //do nothing
+        }
 
-        int th = Math.max(lh, rh) + 1;
-        return th;
+        return node;
     }
 
 
 
-    //1. using static variable
-    static int dia;
-    public static int helper(Node node) {
+    //remove node from a bst
+    public static Node remove(Node node, int data) {
         if (node == null) {
-            return -1;
+            //data is not present in the tree
+            return null;
         }
 
-        int lch = helper(node.left);
-        int rch = helper(node.right);
-
-        int dist = lch + rch + 2;
-
-        if (dist > dia) {
-            dia = dist;
+        if (node.data < data) {
+            node.right = remove(node.right, data);
+        } else if (node.data > data) {
+            node.left = remove(node.left, data);
+        } else {
+            //perform removal
+            if (node.left == null && node.right == null) {
+                //node is a leaf node
+                return null;
+            } else if (node.left == null) {
+                //single child -> right child
+                return node.right;
+            } else if (node.right == null) {
+                //single child -> left child
+                return node.left;
+            } else {
+                //node has both the childs
+                int lmax = max(node.left);
+                node.data = lmax;
+                node.left = remove(node.left, lmax);
+            }
         }
 
-        int ht = Math.max(lch, rch) + 1;
-
-        return ht;
-
-    }
-
-    public static int diameter1(Node node) {
-        // write your code here
-        dia = 0;
-        helper(node);
-
-        return dia;
-    }
-
-
-
-    //2. using return type pair
-    public static class DiaPair {
-        int dia;
-        int ht;
-
-        DiaPair() {
-
-        }
-
-        DiaPair(int dia, int ht) {
-            this.dia = dia;
-            this.ht = ht;
-        }
-    }
-
-    public static DiaPair helper(Node node) {
-        if (node == null) {
-            return new DiaPair(0, -1);
-        }
-
-        DiaPair lp = helper(node.left);
-        DiaPair rp = helper(node.right);
-
-        int dist = lp.ht + rp.ht + 2;
-        int dia = Math.max(Math.max(lp.dia, rp.dia), dist);
-        int ht = Math.max(lp.ht, rp.ht) + 1;
-
-        return new DiaPair(dia, ht);
-    }
-
-    public static int diameter1(Node node) {
-        // write your code here
-
-        DiaPair rp = helper(node);
-
-        return rp.dia;
+        return node;
     }
 
     public static void main(String[] args) throws Exception {
-      //input can be managed
+        //input can be managed
     }
 
 }

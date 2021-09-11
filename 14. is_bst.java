@@ -91,80 +91,62 @@ public class Main {
         return th;
     }
 
+    public static class BSTPair {
+        int max;
+        int min;
+        boolean isBST;
 
+        BSTPair() {
 
-    //1. using static variable
-    static int dia;
-    public static int helper(Node node) {
+        }
+
+        BSTPair(int max, int min, boolean isBST) {
+            this.max = max;
+            this.min = min;
+            this.isBST = isBST;
+        }
+    }
+
+    public static BSTPair helper(Node node) {
         if (node == null) {
-            return -1;
+            return new BSTPair(Integer.MIN_VALUE, Integer.MAX_VALUE, true);
         }
 
-        int lch = helper(node.left);
-        int rch = helper(node.right);
+        BSTPair lp = helper(node.left);
+        BSTPair rp = helper(node.right);
 
-        int dist = lch + rch + 2;
+        int max = Math.max(Math.max(lp.max, rp.max), node.data);
+        int min = Math.min(Math.min(lp.min, rp.min), node.data);
 
-        if (dist > dia) {
-            dia = dist;
-        }
+        boolean isBST = lp.isBST && rp.isBST && (lp.max < node.data && rp.min > node.data);
 
-        int ht = Math.max(lch, rch) + 1;
-
-        return ht;
+        return new BSTPair(max, min, isBST);
 
     }
 
-    public static int diameter1(Node node) {
-        // write your code here
-        dia = 0;
-        helper(node);
+    public static boolean isBinarySearchTree(Node root) {
 
-        return dia;
-    }
-
-
-
-    //2. using return type pair
-    public static class DiaPair {
-        int dia;
-        int ht;
-
-        DiaPair() {
-
-        }
-
-        DiaPair(int dia, int ht) {
-            this.dia = dia;
-            this.ht = ht;
-        }
-    }
-
-    public static DiaPair helper(Node node) {
-        if (node == null) {
-            return new DiaPair(0, -1);
-        }
-
-        DiaPair lp = helper(node.left);
-        DiaPair rp = helper(node.right);
-
-        int dist = lp.ht + rp.ht + 2;
-        int dia = Math.max(Math.max(lp.dia, rp.dia), dist);
-        int ht = Math.max(lp.ht, rp.ht) + 1;
-
-        return new DiaPair(dia, ht);
-    }
-
-    public static int diameter1(Node node) {
-        // write your code here
-
-        DiaPair rp = helper(node);
-
-        return rp.dia;
+        BSTPair rp = helper(root);
+        return rp.isBST;
     }
 
     public static void main(String[] args) throws Exception {
-      //input can be managed
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int n = Integer.parseInt(br.readLine());
+        Integer[] arr = new Integer[n];
+        String[] values = br.readLine().split(" ");
+        for (int i = 0; i < n; i++) {
+            if (values[i].equals("n") == false) {
+                arr[i] = Integer.parseInt(values[i]);
+            } else {
+                arr[i] = null;
+            }
+        }
+
+        Node root = construct(arr);
+
+        // write your code here
+        System.out.println(isBinarySearchTree(root));
     }
 
 }
